@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identify — Face Identifier with ArcFace Model</title>
+  <meta name="description" content="Advanced face scanning AI technology. Quick and reliable identity verification powered by ArcFace.">
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Outer Frame -->
+  <div class="luxury-shell">
+
+    <!-- Top Navigation Header -->
+    <header class="luxury-header">
+      <!-- Iconic White Notch Tab -->
+      <div class="brand-notch">
+        <div class="brand-icon-wrap">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="3" width="7" height="7" rx="2"/>
+            <rect x="14" y="3" width="7" height="7" rx="2"/>
+            <rect x="14" y="14" width="7" height="7" rx="2"/>
+            <rect x="3" y="14" width="7" height="7" rx="2"/>
+          </svg>
+        </div>
+        <span class="brand-name">Identify</span>
+      </div>
+
+      <!-- Navigation Pill Group -->
+      <nav class="nav-pills">
+        <button class="pill-btn active" data-tab="scanner" id="tabBtnScanner" onclick="switchTab('scanner')">
+          <span>Face Read</span>
+        </button>
+        <button class="pill-btn" data-tab="enrollment" id="tabBtnEnroll" onclick="switchTab('enrollment')">
+          <span>Face Upload</span>
+        </button>
+        <button class="pill-btn" data-tab="database" id="tabBtnDb" onclick="switchTab('database')">
+          <span>Database Wajah</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="header-right">
+        <div class="status-pill">
+          <span class="status-pulse"></span>
+          <span class="status-text">Engine Ready</span>
+        </div>
+        <button class="pill-btn-solid" id="btnQuickAction">Mulai Scan</button>
+      </div>
+    </header>
+
+    <!-- Main Container Content -->
+    <main class="luxury-content">
+
+      <!-- ================= TAB 1: SCANNER (READ) ================= -->
+      <section class="tab-pane active" id="pane-scanner">
+        <div class="hero-split">
+          
+          <!-- Left Column: Typography, Result & Statistics -->
+          <div class="hero-text-col">
+            <div class="hero-badge-row">
+              <span class="pill-tag">ArcFace 512-d Biometric</span>
+              <span class="pill-tag muted">Full Offline & Local</span>
+            </div>
+
+            <h1 class="hero-headline">
+              Face Identifier
+              <span class="hero-model-sub">with model ArcFace (buffalo_l)</span>
+            </h1>
+
+            <p class="hero-subtext">
+              Discover the future of security with our advanced face scanning AI technology.
+              Our innovative system offers quick and reliable identity verification, ensuring your safety and privacy.
+            </p>
+
+            <!-- Action Row -->
+            <div class="hero-action-row">
+              <button class="pill-action-white" id="btnToggleCamera">
+                <span id="btnCameraText">Nyalakan Kamera</span>
+              </button>
+              <button class="pill-action-arrow" id="btnActionArrow" title="Arahkan ke kamera">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="7" y1="17" x2="17" y2="7"/>
+                  <polyline points="7 7 17 7 17 17"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Identified Identity Result Card -->
+            <div class="identity-panel" id="identityCard" style="display: none;">
+              <div class="id-row">
+                <div class="id-avatar-circle" id="avatarLetter">A</div>
+                <div class="id-info-col">
+                  <div class="id-badge-row">
+                    <span class="badge-status-pill match" id="matchBadge">Teridentifikasi</span>
+                    <span class="id-meta-code" id="resCode">ID: -</span>
+                  </div>
+                  <h3 class="id-title" id="resName">-</h3>
+                  <p class="id-dept" id="resDept">Dept: -</p>
+                </div>
+              </div>
+
+              <!-- Biometric Score Bar -->
+              <div class="score-card">
+                <div class="score-labels">
+                  <span>Kemiripan Biometrik (Cosine)</span>
+                  <span class="score-val" id="resScore">0%</span>
+                </div>
+                <div class="score-track">
+                  <div class="score-bar" id="resProgress" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State Helper -->
+            <div class="empty-hint" id="emptyResult">
+              <p>Menghadap kamera depan secara wajar untuk mengenali wajah secara instan.</p>
+            </div>
+
+            <!-- Bottom Metric Counters (Matching Reference Image) -->
+            <div class="hero-stats-row">
+              <div class="stat-block">
+                <div class="stat-number" id="statTotalScanned">22.5<span class="stat-unit">k</span></div>
+                <div class="stat-label">Faces Scanned</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-number">99.8<span class="stat-unit">%</span></div>
+                <div class="stat-label">Accuracy Rate</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-number" id="statLatencyVal">&lt; 80<span class="stat-unit">ms</span></div>
+                <div class="stat-label label-with-tip">
+                  Latensi CPU
+                  <span class="info-badge" data-tooltip="Waktu komputasi model AI di CPU (dalam milidetik) mulai dari deteksi hingga pencocokan embedding 1:N.">?</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Camera / Image Viewport -->
+          <div class="hero-viewport-col">
+            <div class="viewport-card">
+
+              <!-- Viewport Screen -->
+              <div class="screen-box" id="viewportScreen">
+                <!-- Video Feed -->
+                <div class="video-holder" id="videoContainer">
+                  <video id="scanVideo" autoplay playsinline muted></video>
+                  <canvas id="scanOverlay"></canvas>
+                  <!-- Minimalist White Corner Brackets -->
+                  <div class="minimal-brackets">
+                    <div class="bracket top-left"></div>
+                    <div class="bracket top-right"></div>
+                    <div class="bracket bottom-left"></div>
+                    <div class="bracket bottom-right"></div>
+                  </div>
+                </div>
+
+                <!-- Static Photo Test Mode -->
+                <div class="photo-test-holder" id="photoScanContainer" style="display: none;">
+                  <div class="photo-drop-box" id="scanPhotoDropzone">
+                    <input type="file" id="scanPhotoInput" accept="image/*" hidden>
+                    <div class="drop-text" id="scanDropPrompt">
+                      <svg class="drop-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                      <h4>Pilih Berkas Foto Pengujian</h4>
+                      <p>Format JPG, PNG, WEBP untuk diidentifikasi</p>
+                      <button class="pill-btn-outline" type="button">Telusuri Berkas</button>
+                    </div>
+                    <div class="drop-preview" id="scanPhotoPreviewWrap" style="display: none;">
+                      <img id="scanPhotoPreview" alt="Uji foto">
+                      <canvas id="scanPhotoCanvas"></canvas>
+                      <button class="pill-btn-small" id="btnClearScanPhoto">Ganti Foto</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="screen-loader" id="scanLoader" style="display: none;">
+                  <div class="minimal-spinner"></div>
+                  <span>Memproses wajah...</span>
+                </div>
+              </div>
+
+              <!-- Viewport Control Bar -->
+              <div class="viewport-toolbar">
+                <div class="toolbar-left">
+                  <div class="pill-segmented">
+                    <button class="segment-btn active" id="btnScanWebcam">Kamera Live</button>
+                    <button class="segment-btn" id="btnScanPhoto">Uji Berkas</button>
+                  </div>
+                </div>
+
+                <div class="toolbar-right">
+                  <!-- Auto-Scan Toggle -->
+                  <div class="control-unit">
+                    <label class="switch-minimal">
+                      <input type="checkbox" id="autoScanSwitch" checked>
+                      <span class="switch-knob"></span>
+                    </label>
+                    <span class="control-text label-with-tip">
+                      Auto-Scan
+                      <span class="info-badge" data-tooltip="Kamera otomatis mendeteksi dan mengenali wajah secara berkala tanpa perlu klik manual.">?</span>
+                    </span>
+                  </div>
+
+                  <!-- Threshold Slider -->
+                  <div class="control-unit">
+                    <span class="control-text label-with-tip">
+                      Threshold <span class="val-tag" id="thresholdValue">45%</span>
+                      <span class="info-badge" data-tooltip="Batas minimal kecocokan biometrik. Default 45%. Nilai lebih tinggi semakin ketat mencegah salah orang.">?</span>
+                    </span>
+                    <input type="range" class="slider-minimal" id="thresholdInput" min="30" max="75" value="45" step="1">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: ENROLLMENT (UPLOAD) ================= -->
+      <section class="tab-pane" id="pane-enrollment">
+        <div class="enroll-container">
+          
+          <div class="section-header">
+            <h2 class="section-title">Face Enrollment</h2>
+            <p class="section-desc">Pilih metode pendaftaran wajah ke database biometrik lokal.</p>
+
+            <!-- Mode Selector Pills -->
+            <div class="pill-segmented enroll-selector">
+              <button class="segment-btn active" id="btnModeSinglePhoto" onclick="setEnrollMode('single')">Unggah 1 Foto (Rekomendasi Cepat)</button>
+              <button class="segment-btn" id="btnModeWebcam" onclick="setEnrollMode('ekyc')">Panduan Kamera (e-KYC 4 Tahap)</button>
+            </div>
+          </div>
+
+          <div class="enroll-grid">
+            <!-- Left: Identity Information Form -->
+            <div class="luxury-card form-panel">
+              <h3 class="panel-title">Informasi Identitas</h3>
+              <p class="panel-subtitle">Data orang yang akan didaftarkan ke sistem.</p>
+
+              <form id="enrollForm" onsubmit="return false;">
+                <div class="input-field">
+                  <label for="enrollName">Nama Lengkap <span class="req">*</span></label>
+                  <input type="text" id="enrollName" class="luxury-input" placeholder="Contoh: Budi Pratama" required>
+                </div>
+
+                <div class="input-field">
+                  <label for="enrollCode">NIK / Kode Identitas <span class="req">*</span></label>
+                  <input type="text" id="enrollCode" class="luxury-input" placeholder="Contoh: EMP-001" required>
+                </div>
+
+                <div class="input-field">
+                  <label for="enrollDept">Divisi / Departemen</label>
+                  <input type="text" id="enrollDept" class="luxury-input" placeholder="Contoh: Engineering / Finance">
+                </div>
+
+                <div id="singlePhotoSubmitWrap">
+                  <button type="button" class="pill-action-white full-width" id="btnSubmitPhotoEnroll">
+                    Daftarkan Wajah Sekarang
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right: Capture / File Upload -->
+            <div class="luxury-card media-panel">
+              <!-- Method 1: Single Photo Upload -->
+              <div id="methodSinglePhoto">
+                <h3 class="panel-title">Berkas Foto Tampak Depan</h3>
+                <p class="panel-subtitle">Cukup 1 pasfoto atau foto selfie yang jelas.</p>
+
+                <div class="photo-drop-box large" id="enrollPhotoDropzone">
+                  <input type="file" id="enrollPhotoInput" accept="image/*" hidden>
+                  <div class="drop-text" id="enrollDropPrompt">
+                    <svg class="drop-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <h4>Pilih atau Drag & Drop Berkas Foto</h4>
+                    <p>Format JPG, PNG, WEBP (Maksimal 10MB)</p>
+                    <button class="pill-btn-outline" type="button" onclick="document.getElementById('enrollPhotoInput').click()">Pilih dari Komputer</button>
+                  </div>
+                  <div class="drop-preview" id="enrollPreviewWrap" style="display: none;">
+                    <img id="enrollPhotoPreview" alt="Preview Pendaftaran">
+                    <button class="pill-btn-small" id="btnClearEnrollPhoto" type="button">Ganti Foto</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Method 2: Webcam Interactive e-KYC (Text-Only Visual Stepper) -->
+              <div id="methodWebcam" style="display: none;">
+                <div class="ekyc-header-row">
+                  <div>
+                    <h3 class="panel-title">Panduan Kamera e-KYC</h3>
+                    <p class="panel-subtitle" id="ekycStepDesc">Tahap 1: Tatap lurus ke kamera di dalam oval guide.</p>
+                  </div>
+                  <div class="ekyc-step-pill" id="ekycStepCounter">Langkah 1 / 4</div>
+                </div>
+
+                <div class="ekyc-screen-wrap">
+                  <video id="ekycVideo" autoplay playsinline muted></video>
+                  <canvas id="ekycCanvas"></canvas>
+                  <div class="minimal-oval" id="ovalGuide"></div>
+                  <div class="ekyc-prompt-banner" id="ekycInstruction">Menyalakan kamera...</div>
+                </div>
+
+                <!-- Text-Only Action Steppers (Clean, No Emojis) -->
+                <div class="ekyc-stepper-grid">
+                  <div class="stepper-card active" id="stepFront">
+                    <div class="step-badge">TAHAP 01</div>
+                    <div class="step-heading">Tatap Lurus</div>
+                    <div class="step-guide">Wajah tepat di tengah oval</div>
+                    <span class="step-status-icon" id="checkFront">○</span>
+                  </div>
+
+                  <div class="stepper-card" id="stepBlink">
+                    <div class="step-badge">TAHAP 02</div>
+                    <div class="step-heading">Kedipkan Mata</div>
+                    <div class="step-guide">Verifikasi keaslian (liveness)</div>
+                    <span class="step-status-icon" id="checkBlink">○</span>
+                  </div>
+
+                  <div class="stepper-card" id="stepLeft">
+                    <div class="step-badge">TAHAP 03</div>
+                    <div class="step-heading">Menoleh Kiri</div>
+                    <div class="step-guide">Putar kepala ~15° ke kiri</div>
+                    <span class="step-status-icon" id="checkLeft">○</span>
+                  </div>
+
+                  <div class="stepper-card" id="stepRight">
+                    <div class="step-badge">TAHAP 04</div>
+                    <div class="step-heading">Menoleh Kanan</div>
+                    <div class="step-guide">Putar kepala ~15° ke kanan</div>
+                    <span class="step-status-icon" id="checkRight">○</span>
+                  </div>
+                </div>
+
+                <div class="ekyc-btn-row">
+                  <button class="pill-btn-outline" id="btnRestartEkyc" type="button">Ulangi Langkah</button>
+                  <button class="pill-action-white" id="btnFinishEkyc" type="button" disabled>Simpan Pendaftaran (3 Pose)</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: DATABASE DIRECTORY ================= -->
+      <section class="tab-pane" id="pane-database">
+        <div class="luxury-card database-panel">
+          <div class="db-header-row">
+            <div>
+              <h2 class="section-title">Direktori Wajah Terdaftar</h2>
+              <p class="section-desc">Daftar identitas yang tersimpan pada database lokal SQLite.</p>
+            </div>
+            <div class="db-controls-row">
+              <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="dbSearchInput" class="search-input" placeholder="Cari nama atau NIK...">
+              </div>
+              <button class="pill-btn-outline" id="btnRefreshDb">Segarkan</button>
+            </div>
+          </div>
+
+          <div class="db-table-wrapper">
+            <table class="luxury-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Kode / NIK</th>
+                  <th>Nama Lengkap</th>
+                  <th>Divisi</th>
+                  <th>Sampel Vektor</th>
+                  <th>Waktu Terdaftar</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="dbTableBody">
+                <tr>
+                  <td colspan="7" class="table-empty">Memuat database...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Floating Tooltip Popover -->
+    <div class="global-tooltip-box" id="globalTooltipBox" style="display: none;"></div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="/static/js/camera.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

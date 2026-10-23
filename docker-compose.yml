@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  face-identifier:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: face_identifier_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - face_data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TF_CPP_MIN_LOG_LEVEL=3
+      - HOST=0.0.0.0
+      - PORT=8000
+
+volumes:
+  face_data:
